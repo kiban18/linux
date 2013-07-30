@@ -17,7 +17,10 @@ export SUBARCH=arm
 
 export TARGET=$*
 
-make exynos_defconfig
+if [ ! -f .config ]; then
+	make exynos_defconfig
+fi
+
 make $TARGET 2>&1 | tee make.log
 
-vim +/\\cerror:.* make.log
+#vim "+/\(Kernel: .* is ready\|error:.*\|.*syntax error\|.*오류 [1-9]\)" make.log
