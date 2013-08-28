@@ -334,7 +334,7 @@ __create_page_tables:
 #endif
 	mov	pc, lr
 ENDPROC(__create_page_tables)
-	.ltorg
+	.ltorg		@@ This directive causes the current contents of the literal pool to be dumped to the current location.
 	.align
 __turn_mmu_on_loc:
 	.long	.
@@ -516,9 +516,9 @@ smp_on_up:
 	.text
 __do_fixup_smp_on_up:
 	cmp	r4, r5
-	movhs	pc, lr
-	ldmia	r4!, {r0, r6}
- ARM(	str	r6, [r0, r3]	)
+	movhs	pc, lr	@@ if (__smpalt_begin >= __smpalt_end) return;
+	ldmia	r4!, {r0, r6}	@@ r0 = ALT_SMP(instr), r6 = ALT_UP(instr)
+ ARM(	str	r6, [r0, r3]	)	@@ replace ALT_SMP(instr) with ALT_UP(instr)
  THUMB(	add	r0, r0, r3	)
 #ifdef __ARMEB__
  THUMB(	mov	r6, r6, ror #16	)	@ Convert word order for big-endian.
